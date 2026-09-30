@@ -16,6 +16,7 @@ CONVENTIONAL_TYPES = {
     "test",
     "chore",
 }
+MAX_SUBJECT_LENGTH = 72
 
 
 def read_message(path: str | None) -> str:
@@ -38,6 +39,11 @@ def lint(message: str) -> list[str]:
     if not subject:
         errors.append("Commit subject is empty.")
         return errors
+
+    if len(subject) > MAX_SUBJECT_LENGTH:
+        errors.append(
+            f"Subject is {len(subject)} characters; keep it at {MAX_SUBJECT_LENGTH} or fewer."
+        )
 
     if ":" in subject:
         prefix = subject.split(":", 1)[0]
