@@ -7,6 +7,16 @@ import argparse
 import sys
 from pathlib import Path
 
+CONVENTIONAL_TYPES = {
+    "feat",
+    "fix",
+    "docs",
+    "style",
+    "refactor",
+    "test",
+    "chore",
+}
+
 
 def read_message(path: str | None) -> str:
     if path:
@@ -27,6 +37,15 @@ def lint(message: str) -> list[str]:
     subject = subject_line(message)
     if not subject:
         errors.append("Commit subject is empty.")
+        return errors
+
+    if ":" in subject:
+        prefix = subject.split(":", 1)[0]
+        kind = prefix.split("(", 1)[0]
+        if kind not in CONVENTIONAL_TYPES:
+            errors.append(
+                f"Unknown type '{kind}'. Use one of: {', '.join(sorted(CONVENTIONAL_TYPES))}."
+            )
     return errors
 
 
